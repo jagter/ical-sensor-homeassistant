@@ -21,7 +21,7 @@ DEFAULT_NAME = 'iCal Sensor'
 DEFAULT_MAX_EVENTS = 5
 
 # Return cached results if last scan was less then this time ago.
-MIN_TIME_BETWEEN_UPDATES = timedelta(seconds=120)
+MIN_TIME_BETWEEN_UPDATES = timedelta(seconds=28800)
 
 
 def setup_platform(hass, config, add_devices_callback, discovery_info=None):
@@ -40,6 +40,7 @@ def setup_platform(hass, config, add_devices_callback, discovery_info=None):
     if data_object.data is None:
         _LOGGER.error('Unable to fetch iCal')
         return False
+    _LOGGER.info(data_object.data)
 
     sensors = []
     for eventnumber in range(maxevents):
@@ -74,19 +75,13 @@ class ICalSensor(Entity):
         self._eventno = eventnumber
         self._hass = hass
         self.data_object = data_object
-        self._name = 'event_' + str(eventnumber)
         self.update()
 
     @property
     def name(self):
         """Return the name of the sensor."""
         return self._name
-
-    @property
-    def icon(self):
-        """Return the icon for the frontend."""
-        return ICON
-
+    
     @property
     def state(self):
         """Return the date of the next event."""
@@ -103,7 +98,8 @@ class ICalSensor(Entity):
                 self._state = "No event"
             else:
                 val = e[self._eventno]
-                self._state = "{} - {}".format( val['name'], val['begin'].strftime("%-d %B %Y %H:%M"))
+                self._state = val['begin'].strftime("%Y-%m-%d")
+                self._name = val['name']
 
 #pylint: disable=too-few-public-methods
 class ICalData(object):
