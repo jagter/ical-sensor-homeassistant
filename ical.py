@@ -99,7 +99,7 @@ class ICalSensor(Entity):
             else:
                 val = e[self._eventno]
                 self._state = val['begin'].strftime("%Y-%m-%d")
-                self._name = val['name']
+                self._name = '{}_{}'.format('trash', val['name'])
 
 #pylint: disable=too-few-public-methods
 class ICalData(object):
